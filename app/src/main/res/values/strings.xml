@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">AndroidIntern</string>
+    <string name="title_bar_text">Custom</string>
+    <string name="upload_box_text">Upload image of clothes item</string>
+    <string name="selected_image_text">Selected: %s</string>
+    <string name="upload_icon_description">Upload Icon</string>
 </resources>
