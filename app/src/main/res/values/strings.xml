@@ -4,4 +4,6 @@
     <string name="upload_box_text">Upload image of clothes item</string>
     <string name="selected_image_text">Selected: %s</string>
     <string name="upload_icon_description">Upload Icon</string>
+    <string name="add_new_item">Add new item</string>
+    <string name="closet_title">Closet</string>
 </resources>

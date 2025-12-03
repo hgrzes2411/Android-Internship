@@ -1,6 +1,8 @@
 package com.example.androidintern.ui.theme
 
-import androidx.compose.ui.graphics.Color
+import com.example.androidintern.ui.theme.BackgroundColor
+import com.example.androidintern.ui.theme.BarColor
 
-val AppBackgroundColor = Color(0xFFFFFAF0)
-val TitleBarColor = Color(0xFFFFC76F)
+val AppBackgroundColor = BackgroundColor
+val TitleBarColor = BarColor
+val FabColor = BarColor
