@@ -1,4 +1,4 @@
-package com.example.androidintern.ui
+package com.example.androidintern.ui.intermediate
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -25,26 +25,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.androidintern.R
 import com.example.androidintern.ui.theme.TitleBarColor
+import com.example.androidintern.ui.utils.rememberDebouncedOnClick
 
 @Composable
 fun UploadBox(modifier: Modifier = Modifier, onUploadClick: () -> Unit) {
+    val debouncedOnClick = rememberDebouncedOnClick(onUploadClick)
     Box(
         modifier = modifier
             .size(180.dp)
-            .clickable { onUploadClick() }
+            .clickable(onClick = debouncedOnClick)
             .padding(2.dp) // space for a line
             .drawBehind {
                 val strokeWidth = 2.dp.toPx()
                 val dashPathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
 
-                // background inside the frame
                 drawRoundRect(
                     color = Color.White,
-                    size = size.copy(width = size.width - strokeWidth, height = size.height - strokeWidth),
+                    size = size.copy(
+                        width = size.width - strokeWidth,
+                        height = size.height - strokeWidth
+                    ),
                     cornerRadius = CornerRadius(16.dp.toPx())
                 )
-
-                // dashed frame
+               
                 drawRoundRect(
                     color = Color.Gray,
                     size = size,
@@ -56,7 +59,7 @@ fun UploadBox(modifier: Modifier = Modifier, onUploadClick: () -> Unit) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
-                painter = painterResource(id = com.example.androidintern.R.drawable.upload),
+                painter = painterResource(id = R.drawable.upload),
                 contentDescription = stringResource(id = R.string.upload_icon_description),
                 tint = TitleBarColor,
                 modifier = Modifier.size(60.dp)

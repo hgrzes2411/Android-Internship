@@ -1,4 +1,4 @@
-package com.example.androidintern.ui
+package com.example.androidintern.ui.intermediate
 
 import android.net.Uri
 import androidx.compose.foundation.layout.padding
