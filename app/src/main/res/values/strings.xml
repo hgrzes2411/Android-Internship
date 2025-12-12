@@ -6,4 +6,26 @@
     <string name="upload_icon_description">Upload Icon</string>
     <string name="add_new_item">Add new item</string>
     <string name="closet_title">Closet</string>
+
+    <string name="title_label">Title</string>
+    <string name="title_placeholder">Name of item</string>
+
+    <string name="category_label">Category</string>
+    <string-array name="categories_array">
+        <item>@string/category_1</item>
+        <item>@string/category_2</item>
+        <item>@string/category_3</item>
+    </string-array>
+
+    <string name="category_1">Category 1</string>
+    <string name="category_2">Category 2</string>
+    <string name="category_3">Category 3</string>
+
+    <string name="description_label">Description</string>
+    <string name="description_placeholder">Write description about item ...</string>
+
+    <string name="upload_image_dialog_title">Upload Image</string>
+    <string name="upload_image_dialog_text">Choose an option</string>
+    <string name="upload_image_dialog_gallery">From Gallery</string>
+    <string name="upload_image_dialog_camera">Take Photo</string>
 </resources>

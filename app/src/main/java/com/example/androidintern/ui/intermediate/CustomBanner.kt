@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.androidintern.ui.theme.TitleBarColor
 
 @Composable
 fun CustomBanner(title: String) {
@@ -20,7 +19,7 @@ fun CustomBanner(title: String) {
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .background(TitleBarColor)
+            .background(MaterialTheme.colorScheme.primary)
             .padding(horizontal = 24.dp, vertical = 10.dp),
         contentAlignment = Alignment.BottomCenter
     ) {

@@ -23,12 +23,10 @@ fun ProductItem(product: Product, modifier: Modifier = Modifier) {
         )
         Column(modifier = Modifier.padding(start = 16.dp)) {
             Text(
-                text = product.title,
-                style = MaterialTheme.typography.titleMedium
+                text = product.title, style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = product.description,
-                style = MaterialTheme.typography.bodySmall
+                text = product.description, style = MaterialTheme.typography.bodySmall
             )
         }
     }
