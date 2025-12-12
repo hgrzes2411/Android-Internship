@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -18,35 +19,27 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androidintern.R
 import com.example.androidintern.ui.elements.ClosetTopBar
 import com.example.androidintern.ui.elements.ProductItem
-import com.example.androidintern.ui.theme.AppBackgroundColor
-import com.example.androidintern.ui.theme.FabColor
-import com.example.androidintern.ui.utils.rememberDebouncedOnClick
 import com.example.androidintern.ui.viewmodels.ProductListViewModel
 
 @Composable
 fun ProductListScreen(
-    onAddClick: () -> Unit,
-    productListViewModel: ProductListViewModel = viewModel()
+    onAddClick: () -> Unit, productListViewModel: ProductListViewModel = viewModel()
 ) {
-    Scaffold(
-        topBar = { ClosetTopBar() },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = rememberDebouncedOnClick(onAddClick),
-                containerColor = FabColor
-            ) {
-                Icon(
-                    Icons.Filled.Add,
-                    contentDescription = stringResource(id = R.string.add_new_item)
-                )
-            }
+    Scaffold(topBar = { ClosetTopBar() }, floatingActionButton = {
+        FloatingActionButton(
+            onClick = { productListViewModel.onAddClickDebounced(onAddClick) },
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
+            Icon(
+                Icons.Filled.Add, contentDescription = stringResource(id = R.string.add_new_item)
+            )
         }
-    ) { padding ->
+    }) { padding ->
         val uiState by productListViewModel.uiState.collectAsState()
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
-                .background(AppBackgroundColor)
+                .background(MaterialTheme.colorScheme.surface)
         ) {
             items(uiState.products) { product ->
                 ProductItem(product = product)

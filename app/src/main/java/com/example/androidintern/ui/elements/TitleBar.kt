@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.androidintern.R
-import com.example.androidintern.ui.theme.TitleBarColor
 
 @Composable
 fun TitleBar(modifier: Modifier = Modifier) {
@@ -23,7 +22,7 @@ fun TitleBar(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .height(70.dp)
-            .background(TitleBarColor),
+            .background(MaterialTheme.colorScheme.primary),
         contentAlignment = Alignment.Center
     ) {
         Text(

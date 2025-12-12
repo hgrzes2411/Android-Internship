@@ -3,7 +3,7 @@ package com.example.androidintern
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-
+import androidx.navigation.compose.rememberNavController
 import com.example.androidintern.navigation.NavGraph
 import com.example.androidintern.ui.theme.AndroidInternTheme
 
@@ -12,7 +12,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AndroidInternTheme {
-                NavGraph()
+                val navController = rememberNavController()
+                NavGraph(navController = navController)
             }
         }
     }

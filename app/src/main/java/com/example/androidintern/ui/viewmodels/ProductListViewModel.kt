@@ -11,33 +11,49 @@ class ProductListViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProductListUiState())
     val uiState: StateFlow<ProductListUiState> = _uiState.asStateFlow()
+    private var lastClickTime = 0L
 
     init {
-        // Load initial data
         _uiState.value = ProductListUiState(
             products = listOf(
                 Product(
                     R.drawable.ic_launcher_background,
                     "Title",
                     "Description duis aute irure dolor in reprehenderit in voluptate velit."
-                ), Product(
+                ),
+                Product(
                     R.drawable.ic_launcher_background,
                     "Title",
                     "Description duis aute irure dolor in reprehenderit in voluptate velit."
-                ), Product(
+                ),
+                Product(
                     R.drawable.ic_launcher_background,
                     "Title",
                     "Description duis aute irure dolor in reprehenderit in voluptate velit."
-                ), Product(
+                ),
+                Product(
                     R.drawable.ic_launcher_background,
                     "Title",
                     "Description duis aute irure dolor in reprehenderit in voluptate velit."
-                ), Product(
+                ),
+                Product(
                     R.drawable.ic_launcher_background,
                     "Title",
                     "Description duis aute irure dolor in reprehenderit in voluptate velit."
                 )
             )
         )
+    }
+
+    fun onAddClickDebounced(onAddClick: () -> Unit) {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime > DEBOUNCE_INTERVAL_SHORT) {
+            lastClickTime = currentTime
+            onAddClick()
+        }
+    }
+
+    companion object {
+        private const val DEBOUNCE_INTERVAL_SHORT = 500L
     }
 }
