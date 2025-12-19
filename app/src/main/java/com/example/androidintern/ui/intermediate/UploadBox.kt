@@ -1,6 +1,5 @@
 package com.example.androidintern.ui.intermediate
 
-import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,34 +27,25 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import com.example.androidintern.R
-import java.io.File
 
 @Composable
-fun UploadBox(modifier: Modifier = Modifier, onImageSelected: (Uri) -> Unit) {
-    val context = LocalContext.current
+fun UploadBox(
+    modifier: Modifier = Modifier,
+    onImageSelected: (Uri) -> Unit,
+    onTakePhotoClick: () -> Unit
+) {
     var showDialog by remember { mutableStateOf(false) }
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let { onImageSelected(it) }
-    }
-
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success) {
-            imageUri?.let { onImageSelected(it) }
-        }
     }
 
     if (showDialog) {
@@ -77,9 +67,7 @@ fun UploadBox(modifier: Modifier = Modifier, onImageSelected: (Uri) -> Unit) {
                 TextButton(
                     onClick = {
                         showDialog = false
-                        val uri = createImageUri(context)
-                        imageUri = uri
-                        cameraLauncher.launch(uri)
+                        onTakePhotoClick()
                     }
                 ) {
                     Text(stringResource(id = R.string.upload_image_dialog_camera))
@@ -132,14 +120,5 @@ fun UploadBox(modifier: Modifier = Modifier, onImageSelected: (Uri) -> Unit) {
 @Preview
 @Composable
 fun UploadBoxPreview() {
-    UploadBox(onImageSelected = {})
-}
-
-private fun createImageUri(context: Context): Uri {
-    val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
-    return FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.provider",
-        file
-    )
+    UploadBox(onImageSelected = {}, onTakePhotoClick = {})
 }

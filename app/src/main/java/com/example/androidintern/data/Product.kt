@@ -3,7 +3,9 @@ package com.example.androidintern.data
 import androidx.annotation.DrawableRes
 
 data class Product(
-    @DrawableRes val imageRes: Int,
+    val id: String,
     val title: String,
-    val description: String
+    val description: String,
+    val category: String,
+    @DrawableRes val imageRes: Int
 )
