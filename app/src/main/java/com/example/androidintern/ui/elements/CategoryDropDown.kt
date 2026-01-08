@@ -17,16 +17,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.androidintern.R
-import com.example.androidintern.ui.models.ItemCategory
+import com.example.androidintern.data.model.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryDropDown(
     expanded: Boolean,
-    selectedCategory: ItemCategory,
-    categories: List<ItemCategory>,
+    selectedCategory: Category,
+    categories: List<Category>,
     onExpandedChange: (Boolean) -> Unit,
-    onCategorySelected: (ItemCategory) -> Unit,
+    onCategorySelected: (Category) -> Unit,
     onDismiss: () -> Unit
 ) {
     ExposedDropdownMenuBox(
@@ -34,7 +34,7 @@ fun CategoryDropDown(
     ) {
         TextField(
             modifier = Modifier.menuAnchor(),
-            value = stringResource(id = selectedCategory.displayName),
+            value = toDisplayName(category = selectedCategory),
             onValueChange = {},
             label = { Text(stringResource(id = R.string.category_label)) },
             readOnly = true,
@@ -54,10 +54,19 @@ fun CategoryDropDown(
             modifier = Modifier.background(MaterialTheme.colorScheme.secondary)
         ) {
             categories.forEach { category ->
-                DropdownMenuItem(text = { Text(text = stringResource(id = category.displayName)) }, onClick = {
+                DropdownMenuItem(text = { Text(text = toDisplayName(category = category)) }, onClick = {
                     onCategorySelected(category)
                 })
             }
         }
+    }
+}
+
+@Composable
+private fun toDisplayName(category: Category): String {
+    return when (category) {
+        Category.CATEGORY1 -> stringResource(id = R.string.category_1)
+        Category.CATEGORY2 -> stringResource(id = R.string.category_2)
+        Category.CATEGORY3 -> stringResource(id = R.string.category_3)
     }
 }
