@@ -3,40 +3,39 @@ package com.example.androidintern.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.androidintern.data.Product
-import com.example.androidintern.data.SampleData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.example.androidintern.data.ProductsRepository
+import com.example.androidintern.data.model.Product
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 data class ProductDetailsUiState(
     val product: Product? = null,
-    val isLoading: Boolean = true
+    val isLoading: Boolean = false
 )
 
-class ProductDetailsViewModel(productId: String) : ViewModel() {
+class ProductDetailsViewModel(
+    private val productsRepository: ProductsRepository,
+    private val productId: Int
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProductDetailsUiState())
-    val uiState: StateFlow<ProductDetailsUiState> = _uiState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            val foundProduct = withContext(Dispatchers.IO) {
-                delay(2000)
-                SampleData.products.find { it.id == productId }
-            }
-            _uiState.value = ProductDetailsUiState(product = foundProduct, isLoading = false)
-        }
-    }
+    val uiState: StateFlow<ProductDetailsUiState> =
+        productsRepository.getProductStream(productId).map { ProductDetailsUiState(it) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = ProductDetailsUiState(isLoading = true)
+            )
 
     @Suppress("UNCHECKED_CAST")
-    class Factory(private val productId: String) : ViewModelProvider.Factory {
+    class Factory(private val productsRepository: ProductsRepository, private val productId: Int) :
+        ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ProductDetailsViewModel(productId) as T
+            if (modelClass.isAssignableFrom(ProductDetailsViewModel::class.java)) {
+                return ProductDetailsViewModel(productsRepository, productId) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
 }

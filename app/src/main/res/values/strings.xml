@@ -4,7 +4,7 @@
     <string name="upload_box_text">Upload image of clothes item</string>
     <string name="selected_image_text">Selected: %s</string>
     <string name="upload_icon_description">Upload Icon</string>
-    <string name="add_new_item">Add new item</string>
+    <string name="add_new_item">Add item</string>
     <string name="closet_title">Closet</string>
 
     <string name="title_label">Title</string>
@@ -20,6 +20,7 @@
     <string name="category_1">Category 1</string>
     <string name="category_2">Category 2</string>
     <string name="category_3">Category 3</string>
+    <string name="category_default">Default</string>
 
     <string name="description_label">Description</string>
     <string name="description_placeholder">Write description about item ...</string>
@@ -31,5 +32,8 @@
 
     <string name="camera_close_description">Close</string>
     <string name="camera_take_photo_description">Take photo</string>
-    <string name="product_not_found">Product not found</string>
+    <string name="item_not_found">Item not found</string>
+    <string name="permission_request_dialog_text">Camera permission is required to take photos.</string>
+    <string name="permission_request_dialog_button">Request Permission</string>
+    <string name="permission_request_dialog_dismiss_button">Dismiss</string>
 </resources>

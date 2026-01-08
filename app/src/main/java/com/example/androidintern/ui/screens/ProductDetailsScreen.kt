@@ -1,6 +1,6 @@
 package com.example.androidintern.ui.screens
 
-import androidx.compose.foundation.Image
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,17 +21,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.androidintern.R
+import com.example.androidintern.di.AppContainer
 import com.example.androidintern.ui.elements.IndeterminateCircularIndicator
 import com.example.androidintern.ui.viewmodels.ProductDetailsViewModel
 
 @Composable
 fun ProductDetailsScreen(productId: String) {
-    val viewModel: ProductDetailsViewModel = viewModel(factory = ProductDetailsViewModel.Factory(productId))
+    val appContainer = AppContainer(LocalContext.current)
+    val viewModel: ProductDetailsViewModel = viewModel(
+        factory = ProductDetailsViewModel.Factory(
+            appContainer.productsRepository,
+            productId.toInt()
+        )
+    )
     val uiState by viewModel.uiState.collectAsState()
 
     Box(
@@ -47,7 +56,7 @@ fun ProductDetailsScreen(productId: String) {
             }
         } else if (uiState.product == null) {
             Text(
-                text = stringResource(id = R.string.product_not_found),
+                text = stringResource(id = R.string.item_not_found),
                 modifier = Modifier.align(Alignment.Center)
             )
         } else {
@@ -59,11 +68,12 @@ fun ProductDetailsScreen(productId: String) {
                         containerColor = MaterialTheme.colorScheme.surfaceContainer
                     )
                 ) {
-                    Image(
-                        painter = painterResource(id = product.imageRes),
+                    AsyncImage(
+                        model = product.photoPath.toUri(),
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(250.dp) // Set a fixed height for the image
                             .clip(MaterialTheme.shapes.large),
                         contentScale = ContentScale.Crop
                     )
@@ -74,7 +84,7 @@ fun ProductDetailsScreen(productId: String) {
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = product.category,
+                            text = product.category.name,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

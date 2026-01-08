@@ -1,4 +1,4 @@
-package com.example.androidintern.ui.models
+package com.example.androidintern.data.model
 
 enum class Category {
     CATEGORY1,

@@ -9,10 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -21,11 +17,13 @@ import com.example.androidintern.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TitleInputBox() {
-    var text by remember { mutableStateOf("") }
+fun TitleInputBox(
+    value: String,
+    onValueChange: (String) -> Unit
+) {
     TextField(
-        value = text,
-        onValueChange = { text = it },
+        value = value,
+        onValueChange = onValueChange,
         label = { Text(stringResource(id = R.string.title_label)) },
         placeholder = { Text(stringResource(id = R.string.title_placeholder)) },
         shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
