@@ -20,9 +20,26 @@ fun Product.fromDomainModel() = ProductEntity(
 )
 
 fun CategoryEntity.toDomainModel(): Category {
-    return enumValueOf(this.name)
+    return Category.valueOf(this.name)
 }
 
 fun Category.fromDomainModel(): CategoryEntity {
-    return enumValueOf(this.name)
+    return CategoryEntity.valueOf(this.name)
+}
+
+fun ApiProduct.toDomainModel() = Product(
+    id = id,
+    title = title,
+    photoPath = image,
+    description = description,
+    category = category.toCategory()
+)
+
+private fun String.toCategory(): Category {
+    return when (this) {
+        "CATEGORY1" -> Category.CATEGORY1
+        "CATEGORY2" -> Category.CATEGORY2
+        "CATEGORY3" -> Category.CATEGORY3
+        else -> Category.CATEGORY1
+    }
 }
