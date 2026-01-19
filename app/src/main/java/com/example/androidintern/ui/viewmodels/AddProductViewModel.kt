@@ -82,8 +82,8 @@ class AddProductViewModel(private val productsRepository: ProductsRepository) : 
                     title = uiState.value.title,
                     description = uiState.value.description,
                     category = uiState.value.selectedCategory,
-                    photoPath = uiState.value.selectedUri?.toString() ?: ""
-                )
+                ),
+                imageUri = uiState.value.selectedUri
             )
         } catch (e: Exception) {
             Log.e("ADD_PRODUCT", "Error inserting product", e)
