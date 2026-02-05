@@ -1,7 +1,0 @@
-package com.example.androidintern.ui.models
-
-enum class Category {
-    CATEGORY1,
-    CATEGORY2,
-    CATEGORY3
-}
