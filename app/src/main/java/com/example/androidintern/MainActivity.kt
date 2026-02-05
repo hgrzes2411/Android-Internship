@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.example.androidintern.di.AppContainer
 import com.example.androidintern.navigation.NavGraph
-import com.example.androidintern.ui.theme.AndroidInternTheme
+import com.example.androidintern.ui.themes.AndroidInternTheme
 
 class MainActivity : ComponentActivity() {
 

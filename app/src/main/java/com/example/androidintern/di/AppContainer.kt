@@ -1,12 +1,11 @@
 package com.example.androidintern.di
 
 import android.content.Context
-import com.example.androidintern.data.ApiService
-import com.example.androidintern.data.DefaultProductsRepository
-import com.example.androidintern.data.InventoryDatabase
-import com.example.androidintern.data.ProductsRepository
-import com.example.androidintern.data.RemoteProductsRepository
-import com.example.androidintern.data.database.LocalProductDataSource
+import com.example.androidintern.datastore.ApiService
+import com.example.androidintern.datastore.ApplicationRepository
+import com.example.androidintern.datastore.InventoryDatabase
+import com.example.androidintern.datastore.ProductsRepository
+import com.example.androidintern.datastore.database.LocalProductDataSource
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -26,10 +25,6 @@ class AppContainer(private val context: Context) {
     }
 
     val productsRepository: ProductsRepository by lazy {
-        DefaultProductsRepository(localProductDataSource, context)
-    }
-
-    val remoteProductsRepository: RemoteProductsRepository by lazy {
-        RemoteProductsRepository(apiService)
+        ApplicationRepository(localProductDataSource, apiService, context)
     }
 }

@@ -9,12 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.androidintern.di.AppContainer
-import com.example.androidintern.ui.screens.AddProductScreen
-import com.example.androidintern.ui.screens.ProductDetailsScreen
-import com.example.androidintern.ui.screens.ProductListScreen
-import com.example.androidintern.ui.screens.StoreProductDetailsScreen
-import com.example.androidintern.ui.screens.StoreScreen
-import com.example.androidintern.ui.viewmodels.StoreViewModelFactory
+import com.example.androidintern.screens.AddProductScreen
+import com.example.androidintern.screens.ProductDetailsScreen
+import com.example.androidintern.screens.ProductListScreen
+import com.example.androidintern.screens.StoreProductDetailsScreen
+import com.example.androidintern.screens.StoreScreen
+import com.example.androidintern.viewmodels.StoreViewModelFactory
 
 @Composable
 fun NavGraph(navController: NavHostController, appContainer: AppContainer) {
@@ -47,7 +47,7 @@ fun NavGraph(navController: NavHostController, appContainer: AppContainer) {
         composable(Routes.STORE) {
             StoreScreen(
                 viewModel = viewModel(
-                    factory = StoreViewModelFactory(appContainer.remoteProductsRepository)
+                    factory = StoreViewModelFactory(appContainer.productsRepository)
                 )
             ) { productId ->
                 navController.navigate(Routes.storeProductDetails(productId))
