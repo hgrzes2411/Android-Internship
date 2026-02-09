@@ -3,12 +3,14 @@ package com.example.androidintern.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -20,27 +22,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.androidintern.di.AppContainer
+import com.example.androidintern.ui.R
 import com.example.androidintern.ui.components.CircularIndicator
 import com.example.androidintern.viewmodels.ProductDetailsViewModel
-import com.example.androidintern.ui.R
 
 @Composable
-fun ProductDetailsScreen(productId: String) {
-    val appContainer = AppContainer(LocalContext.current)
-    val viewModel: ProductDetailsViewModel = viewModel(
-        factory = ProductDetailsViewModel.provideFactory(
-            productsRepository = appContainer.productsRepository,
-            productId = productId.toInt(),
-            isRemote = false
-        )
-    )
+fun ProductDetailsScreen(viewModel: ProductDetailsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
 
     Box(
@@ -69,7 +60,7 @@ fun ProductDetailsScreen(productId: String) {
                     )
                 ) {
                     AsyncImage(
-                        model = product.photoPath.toUri(),
+                        model = product.photoPath?.toUri(),
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -78,16 +69,28 @@ fun ProductDetailsScreen(productId: String) {
                         contentScale = ContentScale.Crop
                     )
                     Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))) {
-                        Text(
-                            text = product.title,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_height_small)))
-                        Text(
-                            text = product.category.name,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Row {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = product.title,
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+                                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_height_small)))
+                                Text(
+                                    text = product.category.name,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            if (uiState.isRemote) {
+                                Button(
+                                    onClick = { viewModel.saveProduct() },
+                                    enabled = !uiState.isSaving
+                                ) {
+                                    Text(text = if (uiState.isSaving) stringResource(id = R.string.adding_button_text) else stringResource(id = R.string.add_button_text))
+                                }
+                            }
+                        }
                         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_height_medium)))
                         Text(
                             text = product.description,

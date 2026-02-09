@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.androidintern.ui"
+    namespace = libs.versions.namespace.get() + ".ui"
     compileSdk = 36
 
     defaultConfig {

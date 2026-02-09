@@ -9,7 +9,7 @@ import com.example.androidintern.datastore.database.ProductEntity
 
 @Database(
     entities = [ProductEntity::class],
-    version = 4, // MUST be incremented
+    version = 5, // MUST be incremented
     exportSchema = false
 )
 @TypeConverters(Converters::class)

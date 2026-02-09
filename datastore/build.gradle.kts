@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -41,4 +42,6 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 }

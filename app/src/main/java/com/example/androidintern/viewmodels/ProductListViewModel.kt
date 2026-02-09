@@ -1,22 +1,24 @@
 package com.example.androidintern.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.androidintern.datastore.ProductsRepository
 import com.example.androidintern.ui.components.ProductItemUiData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 data class ProductListUiState(
     val products: List<ProductItemUiData> = emptyList(),
     val isLoading: Boolean = false,
 )
 
-class ProductListViewModel(
-    productsRepository: ProductsRepository
+@HiltViewModel
+class ProductListViewModel @Inject constructor(
+    private val productsRepository: ProductsRepository
 ) : ViewModel() {
 
     val uiState: StateFlow<ProductListUiState> = productsRepository.getAllProductsStream().map { products ->
@@ -25,7 +27,7 @@ class ProductListViewModel(
                 id = product.id.toString(),
                 title = product.title,
                 description = product.description,
-                photoPath = product.photoPath
+                photoPath = product.photoPath ?: ""
             )
         })
     }.stateIn(
@@ -33,13 +35,4 @@ class ProductListViewModel(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = ProductListUiState(isLoading = true)
     )
-
-    companion object {
-        fun Factory(repository: ProductsRepository) = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return ProductListViewModel(repository) as T
-            }
-        }
-    }
 }

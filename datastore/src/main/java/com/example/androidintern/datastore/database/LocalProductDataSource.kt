@@ -1,6 +1,7 @@
 package com.example.androidintern.datastore.database
 
 import com.example.androidintern.datastore.ProductDao
+import com.example.androidintern.datastore.model.Product
 import kotlinx.coroutines.flow.Flow
 
 class LocalProductDataSource(private val productDao: ProductDao) {

@@ -3,12 +3,12 @@ package com.example.androidintern.navigation
 object Routes {
     const val PRODUCT_LIST = "productList"
     const val ADD_PRODUCT = "addProduct"
-    const val PRODUCT_DETAILS = "productDetails/{productId}"
+    const val PRODUCT_DETAILS = "productDetails/{productId}?isRemote={isRemote}"
     const val STORE = "store"
     const val STORE_PRODUCT_DETAILS = "storeProductDetails/{productId}"
 
-    fun productDetails(productId: String): String {
-        return "productDetails/$productId"
+    fun productDetails(productId: String, isRemote: Boolean): String {
+        return "productDetails/$productId?isRemote=$isRemote"
     }
 
     fun storeProductDetails(productId: String): String {

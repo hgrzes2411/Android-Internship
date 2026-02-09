@@ -37,7 +37,7 @@ fun StoreScreen(viewModel: StoreViewModel, onProductClick: (String) -> Unit) {
                             id = product.id.toString(),
                             title = product.title,
                             description = product.description,
-                            photoPath = product.photoPath
+                            photoPath = product.photoPath ?: ""
                         ),
                         onProductClick = onProductClick
                     )

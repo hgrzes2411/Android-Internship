@@ -5,5 +5,5 @@ data class Product(
     val title: String = "",
     val category: Category = Category.CATEGORY1,
     val description: String = "",
-    val photoPath: String = ""
+    val photoPath: String? = null
 )

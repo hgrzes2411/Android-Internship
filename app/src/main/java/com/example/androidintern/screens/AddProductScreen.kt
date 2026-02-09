@@ -15,18 +15,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.androidintern.di.AppContainer
 import com.example.androidintern.navigation.Routes
 import com.example.androidintern.ui.R
 import com.example.androidintern.ui.components.AddItemButton
@@ -41,65 +37,36 @@ import com.example.androidintern.ui.components.UploadBox
 import com.example.androidintern.ui.themes.AndroidInternTheme
 import com.example.androidintern.viewmodels.AddProductViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AddProductScreen(
     modifier: Modifier = Modifier,
-    addProductViewModel: AddProductViewModel = viewModel(
-        factory = AddProductViewModel.Factory(
-            AppContainer(LocalContext.current).productsRepository
-        )
-    ),
+    viewModel: AddProductViewModel,
     navController: NavController
 ) {
-    val uiState by addProductViewModel.uiState.collectAsState()
-    val isAddingProduct by addProductViewModel.isAddingProduct.collectAsState()
-    val isSelectingPicture by addProductViewModel.isSelectingPicture.collectAsState()
-    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+    val uiState by viewModel.uiState.collectAsState()
 
-    if (uiState.showCameraPreview) {
-        LaunchedEffect(cameraPermissionState) {
-            if (!cameraPermissionState.status.isGranted) {
-                cameraPermissionState.launchPermissionRequest()
-            }
-        }
-
-        if (cameraPermissionState.status.isGranted) {
-            CameraPreviewScreen(
-                onImageCaptured = { addProductViewModel.onPhotoSelected(it) },
-                onDismiss = { addProductViewModel.onCameraDismiss() })
-        } else {
-            PermissionRequestDialog(
-                onRequestPermission = { cameraPermissionState.launchPermissionRequest() },
-                onDismiss = { addProductViewModel.onCameraDismiss() }
-            )
-        }
-    } else {
-        AddProductContent(
-            modifier = modifier,
-            selectedUri = uiState.selectedUri,
-            onImageSelected = { addProductViewModel.onPhotoSelected(it) },
-            onTakePhotoClick = { addProductViewModel.onTakePhotoClick() },
-            expanded = uiState.expanded,
-            selectedCategory = uiState.selectedCategory,
-            categories = uiState.categories,
-            onExpandedChange = addProductViewModel::onExpandedChange,
-            onCategorySelected = addProductViewModel::onCategorySelected,
-            onDismiss = addProductViewModel::onDismiss,
-            isLoading = isAddingProduct || isSelectingPicture,
-            onAddItemClick = {
-                addProductViewModel.addProduct()
-                navController.navigate(Routes.PRODUCT_LIST)
-            },
-            title = uiState.title,
-            onTitleChange = { addProductViewModel.onTitleChanged(it) },
-            description = uiState.description,
-            onDescriptionChange = { addProductViewModel.onDescriptionChanged(it) }
-        )
-    }
+    AddProductContent(
+        modifier = modifier,
+        selectedUri = uiState.selectedUri,
+        onImageSelected = { viewModel.onPhotoSelected(it) },
+        isUploadingImage = uiState.isUploadingImage,
+        onAddItemClick = {
+            viewModel.addProduct()
+            navController.navigate(Routes.PRODUCT_LIST)
+        },
+        title = uiState.title,
+        onTitleChange = { viewModel.onTitleChanged(it) },
+        description = uiState.description,
+        onDescriptionChange = { viewModel.onDescriptionChanged(it) },
+        expanded = uiState.expanded,
+        selectedCategory = uiState.selectedCategory,
+        categories = uiState.categories,
+        onExpandedChange = viewModel::onExpandedChange,
+        onCategorySelected = viewModel::onCategorySelected,
+        onDismiss = viewModel::onDismiss
+    )
 }
 
 @Composable
@@ -107,19 +74,18 @@ private fun AddProductContent(
     modifier: Modifier = Modifier,
     selectedUri: Uri?,
     onImageSelected: (Uri) -> Unit,
-    onTakePhotoClick: () -> Unit,
+    isUploadingImage: Boolean,
+    onAddItemClick: () -> Unit,
+    title: String,
+    onTitleChange: (String) -> Unit,
+    description: String,
+    onDescriptionChange: (String) -> Unit,
     expanded: Boolean,
     selectedCategory: CategoryUi,
     categories: List<CategoryUi>,
     onExpandedChange: (Boolean) -> Unit,
     onCategorySelected: (CategoryUi) -> Unit,
-    onDismiss: () -> Unit,
-    isLoading: Boolean,
-    onAddItemClick: () -> Unit,
-    title: String,
-    onTitleChange: (String) -> Unit,
-    description: String,
-    onDescriptionChange: (String) -> Unit
+    onDismiss: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
@@ -134,7 +100,7 @@ private fun AddProductContent(
             if (selectedUri == null) {
                 UploadBox(
                     onImageSelected = onImageSelected,
-                    onTakePhotoClick = onTakePhotoClick
+                    onTakePhotoClick = {}
                 )
             } else {
                 SelectedImage(selectedUri = selectedUri)
@@ -153,32 +119,10 @@ private fun AddProductContent(
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_height_medium)))
             DescriptionInputField(value = description, onValueChange = onDescriptionChange)
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_height_large)))
-            AddItemButton(onClick = onAddItemClick, isLoading = isLoading)
+            AddItemButton(onClick = onAddItemClick, isLoading = false)
         }
-        if (isLoading) {
+        if (isUploadingImage) {
             CircularIndicator()
-        }
-    }
-}
-
-@Composable
-private fun PermissionRequestDialog(
-    onRequestPermission: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(dimensionResource(id = R.dimen.padding_large))) {
-        Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(stringResource(R.string.permission_request_dialog_text))
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_height_medium)))
-            Button(onClick = onRequestPermission) {
-                Text(stringResource(R.string.permission_request_dialog_button))
-            }
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_medium)))
-            Button(onClick = onDismiss) {
-                Text(stringResource(R.string.permission_request_dialog_dismiss_button))
-            }
         }
     }
 }
@@ -191,19 +135,18 @@ fun PreviewScreen() {
             modifier = Modifier,
             selectedUri = null,
             onImageSelected = {},
-            onTakePhotoClick = {},
+            isUploadingImage = false,
+            onAddItemClick = {},
+            title = "",
+            onTitleChange = {},
+            description = "",
+            onDescriptionChange = {},
             expanded = false,
             selectedCategory = CategoryUi.CATEGORY1,
             categories = CategoryUi.entries.toList(),
             onExpandedChange = {},
             onCategorySelected = {},
-            onDismiss = {},
-            isLoading = false,
-            onAddItemClick = {},
-            title = "",
-            onTitleChange = {},
-            description = "",
-            onDescriptionChange = {}
+            onDismiss = {}
         )
     }
 }

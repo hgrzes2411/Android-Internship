@@ -10,5 +10,5 @@ data class ProductEntity(
     val title: String = "",
     val category: CategoryEntity = CategoryEntity.CATEGORY1,
     val description: String = "",
-    val photoPath: String = ""
+    val photoPath: String? = null
 )
