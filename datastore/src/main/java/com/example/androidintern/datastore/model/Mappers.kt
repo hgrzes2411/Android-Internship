@@ -16,7 +16,7 @@ fun Product.fromDomainModel() = ProductEntity(
     title = title,
     category = category.fromDomainModel(),
     description = description,
-    photoPath = photoPath
+    photoPath = photoPath ?: ""
 )
 
 fun CategoryEntity.toDomainModel(): Category {

@@ -1,83 +1,70 @@
 package com.example.androidintern.viewmodels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.androidintern.datastore.ProductsRepository
 import com.example.androidintern.datastore.model.Product
 import com.example.androidintern.datastore.model.toDomainModel
-import kotlinx.coroutines.flow.SharingStarted
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class ProductDetailsUiState(
     val product: Product? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isRemote: Boolean = false,
+    val isSaving: Boolean = false
 )
 
-class ProductDetailsViewModel(
+@HiltViewModel
+class ProductDetailsViewModel @Inject constructor(
     private val productsRepository: ProductsRepository,
-    private val productId: Int,
-    private val isRemote: Boolean
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val uiState: StateFlow<ProductDetailsUiState>
+    private val _uiState = MutableStateFlow(ProductDetailsUiState(isLoading = true))
+    val uiState: StateFlow<ProductDetailsUiState> = _uiState.asStateFlow()
 
     init {
-        uiState = if (isRemote) {
-            flow {
-                emit(productsRepository.getProduct(productId).toDomainModel())
-            }.map { ProductDetailsUiState(it) }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000),
-                    initialValue = ProductDetailsUiState(isLoading = true)
-                )
-        } else {
-            productsRepository.getProductStream(productId).map { ProductDetailsUiState(it) }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000),
-                    initialValue = ProductDetailsUiState(isLoading = true)
-                )
-        }
-    }
+        val productId: Int = savedStateHandle.get<String>("productId")!!.toInt()
+        val isRemote: Boolean = savedStateHandle.get<Boolean>("isRemote") ?: false
+        _uiState.update { it.copy(isRemote = isRemote) }
 
-    private var lastSaveTime = 0L
-
-    fun saveProduct() {
-        if (isRemote) {
-            val currentTime = System.currentTimeMillis()
-            if (currentTime - lastSaveTime > 2000L) {
-                lastSaveTime = currentTime
-                viewModelScope.launch {
-                    uiState.value.product?.let {
-                        productsRepository.insertProduct(it.copy(id = 0))
-                    }
+        viewModelScope.launch {
+            if (isRemote) {
+                try {
+                    val product = productsRepository.getProduct(productId).toDomainModel()
+                    _uiState.update { it.copy(product = product, isLoading = false) }
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(isLoading = false) }
                 }
+            } else {
+                productsRepository.getProductStream(productId)
+                    .collect { product ->
+                        _uiState.update { it.copy(product = product, isLoading = false) }
+                    }
             }
         }
     }
 
-    companion object {
-        fun provideFactory(
-            productsRepository: ProductsRepository,
-            productId: Int,
-            isRemote: Boolean
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                if (modelClass.isAssignableFrom(ProductDetailsViewModel::class.java)) {
-                    return ProductDetailsViewModel(
-                        productsRepository,
-                        productId,
-                        isRemote
-                    ) as T
+    fun saveProduct() {
+        viewModelScope.launch {
+            if (_uiState.value.isSaving) return@launch
+
+            _uiState.update { it.copy(isSaving = true) }
+            try {
+                uiState.value.product?.let { productToSave ->
+                    productsRepository.insertProduct(productToSave.copy(id = 0))
                 }
-                throw IllegalArgumentException("Unknown ViewModel class")
+            } finally {
+                delay(1000)
+                _uiState.update { it.copy(isSaving = false) }
             }
         }
     }

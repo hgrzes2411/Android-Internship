@@ -2,65 +2,61 @@ package com.example.androidintern.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.androidintern.di.AppContainer
 import com.example.androidintern.screens.AddProductScreen
 import com.example.androidintern.screens.ProductDetailsScreen
 import com.example.androidintern.screens.ProductListScreen
 import com.example.androidintern.screens.StoreProductDetailsScreen
 import com.example.androidintern.screens.StoreScreen
-import com.example.androidintern.viewmodels.StoreViewModelFactory
 
 @Composable
-fun NavGraph(navController: NavHostController, appContainer: AppContainer) {
+fun NavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Routes.PRODUCT_LIST) {
         composable(Routes.PRODUCT_LIST) {
             Log.d("NavGraph", "Navigating to ProductListScreen")
-            ProductListScreen(onAddClick = {
-                navController.navigate(Routes.ADD_PRODUCT) {
-                    launchSingleTop = true
-                }
-            }, onProductClick = {
-                navController.navigate(Routes.productDetails(it))
-            }, onStoreClick = {
-                navController.navigate(Routes.STORE)
-            })
+            ProductListScreen(
+                onAddClick = {
+                    navController.navigate(Routes.ADD_PRODUCT) {
+                        launchSingleTop = true
+                    }
+                }, 
+                onProductClick = { productId ->
+                    navController.navigate(Routes.productDetails(productId, isRemote = false))
+                }, 
+                onStoreClick = {
+                    navController.navigate(Routes.STORE)
+                },
+                viewModel = hiltViewModel()
+            )
         }
         composable(Routes.ADD_PRODUCT) {
             Log.d("NavGraph", "Navigating to AddProduct")
-            AddProductScreen(navController = navController)
+            AddProductScreen(navController = navController, viewModel = hiltViewModel())
         }
         composable(
             route = Routes.PRODUCT_DETAILS,
-            arguments = listOf(navArgument("productId") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("productId") { type = NavType.StringType },
+                navArgument("isRemote") { type = NavType.BoolType; defaultValue = false }
+            )
         ) { backStackEntry ->
-            val productId = backStackEntry.arguments?.getString("productId")
-            if (productId != null) {
-                ProductDetailsScreen(productId = productId)
-            }
+            ProductDetailsScreen(viewModel = hiltViewModel())
         }
         composable(Routes.STORE) {
-            StoreScreen(
-                viewModel = viewModel(
-                    factory = StoreViewModelFactory(appContainer.productsRepository)
-                )
-            ) { productId ->
-                navController.navigate(Routes.storeProductDetails(productId))
+            StoreScreen(viewModel = hiltViewModel()) { productId ->
+                navController.navigate(Routes.productDetails(productId, isRemote = true))
             }
         }
         composable(
             route = Routes.STORE_PRODUCT_DETAILS,
             arguments = listOf(navArgument("productId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val productId = backStackEntry.arguments?.getString("productId")
-            if (productId != null) {
-                StoreProductDetailsScreen(productId = productId)
-            }
+            StoreProductDetailsScreen(viewModel = hiltViewModel())
         }
     }
 }

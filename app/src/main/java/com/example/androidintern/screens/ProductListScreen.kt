@@ -31,11 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.androidintern.di.AppContainer
 import com.example.androidintern.ui.components.ClosetTopBar
 import com.example.androidintern.ui.components.CircularIndicator
 import com.example.androidintern.ui.components.ProductItem
@@ -47,17 +44,13 @@ fun ProductListScreen(
     onAddClick: () -> Unit,
     onProductClick: (String) -> Unit,
     onStoreClick: () -> Unit,
-    productListViewModel: ProductListViewModel = viewModel(
-        factory = ProductListViewModel.Factory(
-            AppContainer(LocalContext.current).productsRepository
-        )
-    )
+    viewModel: ProductListViewModel
 ) {
     var isFabMenuOpen by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(topBar = { ClosetTopBar() }) { padding ->
-            val uiState by productListViewModel.uiState.collectAsState()
+            val uiState by viewModel.uiState.collectAsState()
 
             Box(
                 modifier = Modifier

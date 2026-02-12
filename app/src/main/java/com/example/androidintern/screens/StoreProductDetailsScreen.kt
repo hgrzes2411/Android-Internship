@@ -22,26 +22,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.androidintern.di.AppContainer
 import com.example.androidintern.ui.R
 import com.example.androidintern.ui.components.CircularIndicator
 import com.example.androidintern.viewmodels.ProductDetailsViewModel
 
 @Composable
-fun StoreProductDetailsScreen(productId: String) {
-    val appContainer = AppContainer(LocalContext.current)
-    val viewModel: ProductDetailsViewModel = viewModel(
-        factory = ProductDetailsViewModel.provideFactory(
-            productsRepository = appContainer.productsRepository,
-            productId = productId.toInt(),
-            isRemote = true
-        )
-    )
+fun StoreProductDetailsScreen(viewModel: ProductDetailsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
 
     Box(
@@ -90,20 +79,11 @@ fun StoreProductDetailsScreen(productId: String) {
                                 )
                                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_height_small)))
                                 Text(
-                                    text = product.category.name,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    text = product.description,
+                                    style = MaterialTheme.typography.bodyMedium
                                 )
                             }
-                            Button(onClick = { viewModel.saveProduct() }) {
-                                Text(text = stringResource(id = R.string.add_button_text))
-                            }
                         }
-                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacer_height_medium)))
-                        Text(
-                            text = product.description,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
                     }
                 }
             }

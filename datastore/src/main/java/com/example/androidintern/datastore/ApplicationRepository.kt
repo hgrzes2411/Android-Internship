@@ -7,6 +7,7 @@ import com.example.androidintern.datastore.model.ApiProduct
 import com.example.androidintern.datastore.model.Product
 import com.example.androidintern.datastore.model.fromDomainModel
 import com.example.androidintern.datastore.model.toDomainModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +17,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface ProductsRepository {
     fun getAllProductsStream(): Flow<List<Product>>
@@ -27,10 +30,11 @@ interface ProductsRepository {
     suspend fun getProduct(id: Int): ApiProduct
 }
 
-class ApplicationRepository(
+@Singleton
+class ProductsRepositoryImpl @Inject constructor(
     private val localProductDataSource: LocalProductDataSource,
     private val apiService: ApiService,
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) : ProductsRepository {
     override fun getAllProductsStream(): Flow<List<Product>> = localProductDataSource.getAllProductsStream()
         .map { list -> list.map { it.toDomainModel() } }
@@ -70,7 +74,7 @@ class ApplicationRepository(
     }
 
     override suspend fun getProducts(): List<ApiProduct> {
-        return apiService.getProducts()
+        return apiService.getProducts().products
     }
 
     override suspend fun getProduct(id: Int): ApiProduct {
