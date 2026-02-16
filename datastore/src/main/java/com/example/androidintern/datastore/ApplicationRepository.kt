@@ -19,6 +19,7 @@ import java.io.FileOutputStream
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.random.Random
 
 interface ProductsRepository {
     fun getAllProductsStream(): Flow<List<Product>>
@@ -26,7 +27,7 @@ interface ProductsRepository {
     suspend fun insertProduct(product: Product, imageUri: Uri? = null)
     suspend fun updateProduct(product: Product)
     suspend fun deleteProduct(product: Product)
-    suspend fun getProducts(): List<ApiProduct>
+    suspend fun getProducts(page: Int, limit: Int): List<ApiProduct>
     suspend fun getProduct(id: Int): ApiProduct
 }
 
@@ -73,11 +74,18 @@ class ProductsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getProducts(): List<ApiProduct> {
-        return apiService.getProducts().products
+    override suspend fun getProducts(page: Int, limit: Int): List<ApiProduct> {
+        val categories = listOf("CATEGORY1", "CATEGORY2", "CATEGORY3")
+        val skip = (page - 1) * limit
+        return apiService.getProducts(limit, skip).products.map { product ->
+            product.copy(category = categories.random())
+        }
     }
 
     override suspend fun getProduct(id: Int): ApiProduct {
-        return apiService.getProduct(id)
+        val categories = listOf("CATEGORY1", "CATEGORY2", "CATEGORY3")
+        return apiService.getProduct(id).let {
+            it.copy(category = categories.random())
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.androidintern.navigation
+package com.example.androidintern.ui.navigation
 
 object Routes {
     const val PRODUCT_LIST = "productList"
@@ -6,6 +6,7 @@ object Routes {
     const val PRODUCT_DETAILS = "productDetails/{productId}?isRemote={isRemote}"
     const val STORE = "store"
     const val STORE_PRODUCT_DETAILS = "storeProductDetails/{productId}"
+    const val PROFILE = "profile"
 
     fun productDetails(productId: String, isRemote: Boolean): String {
         return "productDetails/$productId?isRemote=$isRemote"

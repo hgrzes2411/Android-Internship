@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import com.example.androidintern.ui.components.ClosetTopBar
 import com.example.androidintern.ui.components.CircularIndicator
 import com.example.androidintern.ui.components.ProductItem
 import com.example.androidintern.viewmodels.ProductListViewModel
@@ -47,39 +45,35 @@ fun ProductListScreen(
     viewModel: ProductListViewModel
 ) {
     var isFabMenuOpen by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(topBar = { ClosetTopBar() }) { padding ->
-            val uiState by viewModel.uiState.collectAsState()
-
-            Box(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface),
-                contentAlignment = Alignment.Center
-            ) {
-                if (uiState.isLoading) {
-                    CircularIndicator()
-                } else if (uiState.products.isEmpty()) {
-                    Text(
-                        text = stringResource(id = R.string.no_items_in_closet),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.Center)
-                    )
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        userScrollEnabled = !isFabMenuOpen
-                    ) {
-                        items(uiState.products) { product ->
-                            ProductItem(
-                                product = product,
-                                onProductClick = onProductClick
-                            )
-                        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface),
+            contentAlignment = Alignment.Center
+        ) {
+            if (uiState.isLoading) {
+                CircularIndicator()
+            } else if (uiState.products.isEmpty()) {
+                Text(
+                    text = stringResource(id = R.string.no_items_in_closet),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    userScrollEnabled = !isFabMenuOpen
+                ) {
+                    items(uiState.products) { product ->
+                        ProductItem(
+                            product = product,
+                            onProductClick = onProductClick
+                        )
                     }
                 }
             }

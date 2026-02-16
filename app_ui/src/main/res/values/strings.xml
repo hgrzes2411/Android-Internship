@@ -40,4 +40,8 @@
     <string name="permission_request_dialog_dismiss_button">Dismiss</string>
     <string name="add_button_text">Add</string>
     <string name="adding_button_text">Adding...</string>
+    <string name="refresh_prompt_text">Would you like to refresh the product list?</string>
+    <string name="refresh_button_text">Refresh</string>
+    <string name="refresh_dialog_title">Refresh</string>
+    <string name="refresh_dialog_dismiss_button">Dismiss</string>
 </resources>

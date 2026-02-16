@@ -2,6 +2,7 @@ package com.example.androidintern.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -11,12 +12,18 @@ import androidx.navigation.navArgument
 import com.example.androidintern.screens.AddProductScreen
 import com.example.androidintern.screens.ProductDetailsScreen
 import com.example.androidintern.screens.ProductListScreen
+import com.example.androidintern.screens.ProfileScreen
 import com.example.androidintern.screens.StoreProductDetailsScreen
 import com.example.androidintern.screens.StoreScreen
+import com.example.androidintern.ui.navigation.Routes
 
 @Composable
-fun NavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Routes.PRODUCT_LIST) {
+fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
+    NavHost(
+        navController = navController, 
+        startDestination = Routes.PRODUCT_LIST,
+        modifier = modifier
+    ) {
         composable(Routes.PRODUCT_LIST) {
             Log.d("NavGraph", "Navigating to ProductListScreen")
             ProductListScreen(
@@ -57,6 +64,9 @@ fun NavGraph(navController: NavHostController) {
             arguments = listOf(navArgument("productId") { type = NavType.StringType })
         ) { backStackEntry ->
             StoreProductDetailsScreen(viewModel = hiltViewModel())
+        }
+        composable(Routes.PROFILE) {
+            ProfileScreen()
         }
     }
 }
