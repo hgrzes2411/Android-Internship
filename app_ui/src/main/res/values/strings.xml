@@ -54,4 +54,7 @@
     <string name="user_name">Name Surname</string>
     <string name="user_email">namesurname@email.com</string>
     <string name="user_initial">N</string>
+    <string name="incorrect_email_or_password">Incorrect email or password</string>
+    <string name="error_dialog_title">Error</string>
+    <string name="ok_button_text">OK</string>
 </resources>

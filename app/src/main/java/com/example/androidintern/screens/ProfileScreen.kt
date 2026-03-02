@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -22,6 +23,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -185,20 +187,31 @@ fun SignInBottomSheet(
     ) {
         SignInContent(
             isLoading = uiState.isLoginLoading,
-            error = uiState.loginError,
             onSignInClick = { username, password ->
                 viewModel.login(username, password) {
                     onDismissRequest()
                 }
             }
         )
+
+        if (uiState.loginError != null) {
+            AlertDialog(
+                onDismissRequest = { viewModel.onDismissLoginError() },
+                title = { Text(text = stringResource(id = R.string.error_dialog_title)) },
+                text = { Text(text = uiState.loginError!!) },
+                confirmButton = {
+                    Button(onClick = { viewModel.onDismissLoginError() }) {
+                        Text(text = stringResource(id = R.string.ok_button_text))
+                    }
+                }
+            )
+        }
     }
 }
 
 @Composable
 fun SignInContent(
     isLoading: Boolean,
-    error: String?,
     onSignInClick: (String, String) -> Unit
 ) {
     var username by remember { mutableStateOf("emilys") } // Default from dummyjson
@@ -215,7 +228,7 @@ fun SignInContent(
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text(stringResource(id = R.string.email_label)) }, // Reusing label for username
+            label = { Text(stringResource(id = R.string.email_label)) },
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -246,11 +259,6 @@ fun SignInContent(
             ),
             shape = RoundedCornerShape(8.dp)
         )
-
-        if (error != null) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = error, color = Color.Red, fontSize = 12.sp)
-        }
 
         Spacer(modifier = Modifier.height(48.dp))
 

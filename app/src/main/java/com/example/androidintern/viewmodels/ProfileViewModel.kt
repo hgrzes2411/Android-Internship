@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 data class ProfileUiState(
@@ -63,10 +64,19 @@ class ProfileViewModel @Inject constructor(
                     onSuccess()
                 },
                 onFailure = { error ->
-                    _uiState.value = _uiState.value.copy(isLoginLoading = false, loginError = error.message)
+                    val errorMessage = if (error is HttpException && error.code() == 400) {
+                        "Incorrect email or password"
+                    } else {
+                        error.message
+                    }
+                    _uiState.value = _uiState.value.copy(isLoginLoading = false, loginError = errorMessage)
                 }
             )
         }
+    }
+
+    fun onDismissLoginError() {
+        _uiState.value = _uiState.value.copy(loginError = null)
     }
 
     fun logout() {
