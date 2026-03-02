@@ -44,4 +44,14 @@
     <string name="refresh_button_text">Refresh</string>
     <string name="refresh_dialog_title">Refresh</string>
     <string name="refresh_dialog_dismiss_button">Dismiss</string>
+    <string name="sign_in">Sing in</string>
+    <string name="account_title">Account</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="default_email">email@email.com</string>
+    <string name="default_password">password123</string>
+    <string name="sign_out">Sing out</string>
+    <string name="user_name">Name Surname</string>
+    <string name="user_email">namesurname@email.com</string>
+    <string name="user_initial">N</string>
 </resources>

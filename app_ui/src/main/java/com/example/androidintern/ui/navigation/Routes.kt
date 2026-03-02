@@ -7,6 +7,7 @@ object Routes {
     const val STORE = "store"
     const val STORE_PRODUCT_DETAILS = "storeProductDetails/{productId}"
     const val PROFILE = "profile"
+    const val SIGN_IN_MODAL = "signInModal"
 
     fun productDetails(productId: String, isRemote: Boolean): String {
         return "productDetails/$productId?isRemote=$isRemote"

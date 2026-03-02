@@ -44,4 +44,5 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }

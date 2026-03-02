@@ -8,11 +8,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.example.androidintern.screens.AddProductScreen
 import com.example.androidintern.screens.ProductDetailsScreen
 import com.example.androidintern.screens.ProductListScreen
 import com.example.androidintern.screens.ProfileScreen
+import com.example.androidintern.screens.SignInBottomSheet
 import com.example.androidintern.screens.StoreProductDetailsScreen
 import com.example.androidintern.screens.StoreScreen
 import com.example.androidintern.ui.navigation.Routes
@@ -66,7 +68,18 @@ fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
             StoreProductDetailsScreen(viewModel = hiltViewModel())
         }
         composable(Routes.PROFILE) {
-            ProfileScreen()
+            ProfileScreen(
+                onSignInClick = {
+                    navController.navigate(Routes.SIGN_IN_MODAL)
+                }
+            )
+        }
+        dialog(Routes.SIGN_IN_MODAL) {
+            SignInBottomSheet(
+                onDismissRequest = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
