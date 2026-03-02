@@ -23,3 +23,4 @@ rootProject.name = "AndroidIntern"
 include(":app")
 include(":datastore")
 include(":app_ui")
+include(":benchmark")
