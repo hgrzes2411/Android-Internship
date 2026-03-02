@@ -23,7 +23,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import com.example.androidintern.navigation.Routes
 import com.example.androidintern.ui.R
 import com.example.androidintern.ui.components.AddItemButton
 import com.example.androidintern.ui.components.CategoryDropdown
@@ -34,6 +33,7 @@ import com.example.androidintern.ui.components.SelectedImage
 import com.example.androidintern.ui.components.TitleBar
 import com.example.androidintern.ui.components.TitleInputBox
 import com.example.androidintern.ui.components.UploadBox
+import com.example.androidintern.ui.navigation.Routes
 import com.example.androidintern.ui.themes.AndroidInternTheme
 import com.example.androidintern.viewmodels.AddProductViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
